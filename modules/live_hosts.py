@@ -23,7 +23,7 @@ Why This Phase is Critical:
 - Saves time in subsequent scanning phases
 - Professional pentesters ALWAYS verify live hosts before deep scanning
 
-Author: Cybersecurity Student
+Author: Sunny Pal
 Date: January 2026
 """
 

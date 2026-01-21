@@ -30,7 +30,7 @@ Legal Warning:
 - Respect bug bounty program scope and rules
 - Aggressive scanning can be detected and result in IP bans
 
-Author: Cybersecurity Student
+Author: Sunny Pal
 Date: January 2026
 """
 

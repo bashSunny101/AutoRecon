@@ -1,4 +1,4 @@
-# Python dependencies for Bug Bounty Recon Framework
+# Python dependencies for AutoRecon framework
 # Install with: pip3 install -r requirements.txt
 
 # No external Python packages needed for now

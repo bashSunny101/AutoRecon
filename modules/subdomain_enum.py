@@ -15,7 +15,7 @@ Technique: Passive Reconnaissance
 - We do NOT directly interact with the target (stealthier, legal in most contexts)
 - Tool used: Subfinder (industry-standard subdomain enumeration tool)
 
-Author: Cybersecurity Student
+Author: Sunny Pal
 Date: January 2026
 """
 
