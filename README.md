@@ -1,53 +1,40 @@
-# 🔍 AutoRecon - Automated Bug Bounty Reconnaissance Framework
+# AutoRecon
 
-> **A professional reconnaissance automation tool for bug bounty hunters and penetration testers**
+**Automated Reconnaissance Framework for Bug Bounty Hunters**
 
-## 📋 Overview
+A modular Python framework that automates the reconnaissance phase of security assessments using industry-standard tools and methodologies.
 
-AutoRecon is a modular Python framework that automates the reconnaissance phase of security assessments. It performs subdomain enumeration, live host detection, port scanning, URL collection, and vulnerability scanning in a systematic, industry-standard workflow.
+## Features
 
-**Target Audience:** Beginner to intermediate cybersecurity professionals, bug bounty hunters, and aspiring penetration testers.
+- **5-Phase Automated Pipeline** - Subdomain enumeration → Live host detection → Port scanning → URL collection → Report generation
+- **Passive Reconnaissance** - Stealthy information gathering using public sources
+- **Modular Architecture** - Each phase runs independently or as part of the full workflow
+- **Professional Reports** - Comprehensive findings with risk categorization and recommendations
+- **Educational** - Extensively commented code for learning cybersecurity concepts
 
-## ✨ Features
+## Quick Start
 
-- **Automated Recon Pipeline** - Executes reconnaissance phases in logical order
-- **Modular Architecture** - Each recon phase is isolated and reusable
-- **Organized Output** - Results saved per target in structured directories
-- **Beginner-Friendly** - Clean, commented code with educational explanations
-- **Interview-Ready** - Professional project showcasing pentesting knowledge
+```bash
+# Clone repository
+git clone <your-repo-url>
+cd AutoRecon
 
-## 🎯 Recon Workflow
+# Install dependencies
+sudo apt update && sudo apt install -y nmap golang-go
+go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
+go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest
+go install github.com/tomnomnom/waybackurls@latest
+export PATH=$PATH:~/go/bin
 
-```
-Input Domain (example.com)
-    ↓
-1. Subdomain Enumeration    → Discovers all subdomains
-    ↓
-2. Live Host Detection      → Identifies active hosts
-    ↓
-3. Port Scanning            → Maps open ports and services
-    ↓
-4. URL Collection           → Gathers historical endpoints
-    ↓
-5. Vulnerability Scanning   → Basic security checks
-    ↓
-6. Report Generation        → Consolidated findings
+# Run reconnaissance
+python3 recon.py target.com
 ```
 
-## 🛠️ Tech Stack
+## Sample Output
 
-- **Python 3** - Core scripting language
-- **Subfinder** - Subdomain discovery
-- **Httpx** - HTTP probing and live host detection
-- **Nmap** - Port scanning
-- **Waybackurls** - Historical URL enumeration
-- **Nuclei** - Vulnerability scanning
-
-## 📁 Project Structure
-
-```
-AutoRecon/
-├── recon.py                # Main controller script
+### Input
+```bash
+$ python3 recon.py hackerone.com
 ├── modules/
 │   ├── subdomain_enum.py   # Subdomain enumeration module
 │   ├── live_hosts.py       # Live host detection module
@@ -62,128 +49,224 @@ AutoRecon/
 
 ## ⚙️ Installation
 
-### 1. Install System Dependencies (Ubuntu/Debian)
-
-```bash
-# Update package list
-sudo apt update
-
-# Install Go (required for some tools)
-sudo apt install golang-go -y
-
-# Install Nmap
-sudo apt install nmap -y
 ```
 
-### 2. Install Security Tools
+### Output
+```
+╔════════════════════════════════════════════════════════════════════╗
+║                         AUTORECON v1.0                             ║
+║              Automated Bug Bounty Reconnaissance                   ║
+╚════════════════════════════════════════════════════════════════════╝
+
+[*] Target: hackerone.com
+[*] Starting reconnaissance workflow...
+
+======================================================================
+PHASE 1: SUBDOMAIN ENUMERATION
+======================================================================
+
+[+] Found 247 subdomains
+[+] Results saved to: output/hackerone.com/subdomains.txt
+
+======================================================================
+PHASE 2: LIVE HOST DETECTION
+======================================================================
+
+[+] Found 189 live hosts
+Protocol Distribution:
+  • HTTPS: 185 hosts
+  • HTTP:  4 hosts
+
+======================================================================
+PHASE 3: PORT SCANNING & SERVICE DETECTION
+======================================================================
+
+[+] api.hackerone.com - 5 open ports:
+    Port 80     | http            | Cloudflare http proxy
+    Port 443    | ssl/http        | Cloudflare http proxy
+    Port 8080   | http            | Cloudflare http proxy
+    
+⚠️  WARNINGS:
+    • Port 8080 (HTTP-Proxy) - Alternative HTTP, often admin panels
+
+======================================================================
+PHASE 4: URL & ENDPOINT COLLECTION
+======================================================================
+
+[+] Total Historical URLs: 12,453
+
+API Endpoints Found: 47
+  → Test for: Authentication bypass, IDOR, data exposure
+
+Admin/Login Panels: 23
+  → Test for: Default credentials, SQL injection
+
+🚨 CRITICAL - Sensitive Files: 8
+  → HIGH PRIORITY: Check for exposed credentials, configs
+
+======================================================================
+PHASE 5: REPORT GENERATION
+======================================================================
+
+[+] Report generated successfully!
+[+] Saved to: output/hackerone.com/recon_report.txt
+
+======================================================================
+RECONNAISSANCE COMPLETE!
+======================================================================
+Duration: 0:08:34
+```
+
+### Generated Report Preview
+```
+======================================================================
+               AUTOMATED RECONNAISSANCE REPORT
+======================================================================
+
+Target Domain:    hackerone.com
+Scan Date:        2026-01-21 14:22:54
+Framework:        AutoRecon v1.0
+
+EXECUTIVE SUMMARY
+----------------------------------------------------------------------
+
+KEY METRICS:
+  • Subdomains Discovered:     247
+  • Live Hosts Confirmed:      189
+  • Hosts Port Scanned:        189
+  • Historical URLs Found:     12,453
+  • API Endpoints Identified:  47
+  • Admin Panels Discovered:   23
+  • Sensitive Files Found:     8
+
+RISK SUMMARY:
+  🚨 CRITICAL: 8 sensitive files discovered
+  ⚠️  HIGH:     23 admin panels identified
+  ⚠️  MEDIUM:   47 API endpoints found
+
+RECOMMENDATIONS & NEXT STEPS
+----------------------------------------------------------------------
+
+1. CRITICAL - Review Sensitive Files
+   • Check for .env files, .sql dumps, .zip backups
+   • Look for exposed credentials or API keys
+
+2. HIGH - Test Admin Panels
+   • Verify accessibility
+   • Test for default credentials
+   • Check for SQL injection vulnerabilities
+
+3. MEDIUM - API Endpoint Testing
+   • Map API structure and versioning
+   • Test authentication mechanisms
+   • Check for IDOR vulnerabilities
+```
+
+## Architecture
+
+```
+AutoRecon/
+├── recon.py                # Main orchestrator
+├── modules/
+│   ├── subdomain_enum.py   # Phase 1: Subdomain discovery
+│   ├── live_hosts.py       # Phase 2: HTTP/HTTPS probing
+│   ├── port_scan.py        # Phase 3: Port/service detection
+│   ├── url_collector.py    # Phase 4: Wayback Machine URLs
+│   └── report.py           # Phase 5: Report generation
+└── output/
+    └── <target>/           # Organized results per target
+```
+
+## Reconnaissance Workflow
+
+1. **Subdomain Enumeration** - Passive discovery via Certificate Transparency logs, DNS databases
+2. **Live Host Detection** - Multi-threaded HTTP/HTTPS probing with technology detection
+3. **Port Scanning** - Nmap service version detection on top 1000 ports
+4. **URL Collection** - Historical endpoint discovery via Wayback Machine
+5. **Report Generation** - Professional summary with risk categorization
+
+## Technologies
+
+| Tool | Purpose | Type |
+|------|---------|------|
+| **Subfinder** | Subdomain enumeration | Passive |
+| **Httpx** | Live host detection | Semi-passive |
+| **Nmap** | Port & service scanning | Active |
+| **Waybackurls** | Historical URL discovery | Passive |
+| **Python 3** | Orchestration & automation | - |
+
+## Installation
 
 ```bash
-# Subfinder
+# Install system dependencies
+sudo apt update
+sudo apt install -y nmap golang-go
+
+# Install Go-based security tools
 go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
-
-# Httpx
 go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest
-
-# Waybackurls
 go install github.com/tomnomnom/waybackurls@latest
 
-# Nuclei
-go install -v github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest
-
-# Add Go bin to PATH (add to ~/.bashrc or ~/.zshrc)
+# Add Go binaries to PATH
 export PATH=$PATH:~/go/bin
+echo 'export PATH=$PATH:~/go/bin' >> ~/.bashrc
 ```
 
-### 3. Clone and Setup AutoRecon
+## Usage
 
+**Full automated scan:**
 ```bash
-# Clone repository
-git clone <your-repo-url>
-cd AutoRecon
-
-# Verify tools are installed
-subfinder -version
-httpx -version
-nmap --version
-waybackurls -h
-nuclei -version
+python3 recon.py target.com
 ```
 
-## 🚀 Usage
-
-### Basic Usage
-
+**Individual modules:**
 ```bash
-# Run full reconnaissance on a target
-python3 recon.py example.com
+python3 modules/subdomain_enum.py target.com
+python3 modules/live_hosts.py target.com
+python3 modules/port_scan.py target.com
+python3 modules/url_collector.py target.com
+python3 modules/report.py target.com
 ```
 
-### Module-Specific Usage
-
-```bash
-# Run only subdomain enumeration
-python3 modules/subdomain_enum.py example.com
-
-# Run only live host detection
-python3 modules/live_hosts.py example.com
-
-# Run only port scanning
-python3 modules/port_scan.py example.com
+**Output structure:**
+```
+output/target.com/
+├── subdomains.txt              # All discovered subdomains
+├── live_hosts.txt              # Active hosts with metadata
+├── live_hosts_clean.txt        # Clean URL list
+├── port_scans/                 # Individual Nmap results
+│   └── *.txt
+├── urls/                       # Categorized URL findings
+│   ├── *_urls.txt
+│   ├── *_api_endpoints.txt
+│   ├── *_admin_panels.txt
+│   ├── *_sensitive.txt
+│   └── *_parameters.txt
+└── recon_report.txt            # Comprehensive summary
 ```
 
-### Output Location
+## Legal Disclaimer
 
-All results are saved in `output/<target-domain>/`:
-```
-output/example.com/
-├── subdomains.txt          # Discovered subdomains
-├── live_hosts.txt          # Active hosts
-├── port_scan.txt           # Port scan results
-├── urls.txt                # Collected URLs
-└── recon_report.txt        # Final report
-```
+This tool is for **authorized security testing only**. Usage requires explicit written permission from the target owner. Unauthorized reconnaissance may violate laws including the Computer Fraud and Abuse Act (CFAA) and similar international regulations.
 
-## ⚠️ Legal Disclaimer
+**Authorized use cases:**
+- Personal infrastructure and websites
+- Bug bounty programs (within stated scope)
+- Penetration testing engagements with signed contracts
+- Educational lab environments
 
-**This tool is for educational purposes and authorized security testing only.**
+## Learning Outcomes
 
-- ✅ Use on your own systems
-- ✅ Use in authorized bug bounty programs (within scope)
-- ✅ Use with written permission from target owner
-- ❌ **DO NOT** use on systems without authorization
+- Reconnaissance methodology and attack surface mapping
+- Python automation and subprocess management
+- Integration of multiple security tools
+- Professional security reporting
+- Ethical hacking principles and legal considerations
 
-Unauthorized scanning is illegal and unethical. Always obtain proper authorization before testing.
+## License
 
-## 🎓 Learning Objectives
-
-By building and using this project, you'll learn:
-
-- **Reconnaissance methodology** used in real pentesting
-- **Python automation** for security tasks
-- **Linux command-line** security tools
-- **Attack surface mapping** techniques
-- **Professional reporting** and documentation
-- **Ethical hacking** workflow and mindset
-
-## 🤝 Contributing
-
-This is a learning project. Feel free to:
-- Add new reconnaissance modules
-- Improve existing functionality
-- Enhance documentation
-- Report bugs or suggest features
-
-## 📚 Resources
-
-- [OWASP Testing Guide](https://owasp.org/www-project-web-security-testing-guide/)
-- [Bug Bounty Methodology](https://github.com/KathanP19/HowToHunt)
-- [HackerOne Disclosure Guidelines](https://www.hackerone.com/disclosure-guidelines)
-
-## 📝 License
-
-MIT License - Educational purposes
+MIT License - For educational and authorized security testing purposes
 
 ---
 
-**Built with 🔐 by cybersecurity learners, for cybersecurity learners**
-Automated Bug Bounty Recon Framework
+**Built for cybersecurity learners and bug bounty hunters**
