@@ -1,0 +1,12 @@
+# Python dependencies for Bug Bounty Recon Framework
+# Install with: pip3 install -r requirements.txt
+
+# No external Python packages needed for now
+# We'll use subprocess to call command-line tools
+
+# External tools required (install separately):
+# - subfinder: https://github.com/projectdiscovery/subfinder
+# - httpx: https://github.com/projectdiscovery/httpx
+# - nmap: sudo apt install nmap
+# - waybackurls: https://github.com/tomnomnom/waybackurls
+# - nuclei: https://github.com/projectdiscovery/nuclei
